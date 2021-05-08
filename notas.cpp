@@ -57,6 +57,8 @@ int main(int argc, char** argv){
 //===============================================================================//
 
 void refaz_notas(){
+//refaz a lista com as notas disponíveis no vetor geral
+//de linhas disponíveis
    std::ofstream notas = std::ofstream("notas.txt");
    for(int clk = 0; clk < linhas.size(); clk++)
       notas << linhas[clk] << "\n*\n";
@@ -64,9 +66,11 @@ void refaz_notas(){
 }
 
 void remove_nota(){
-   //fazer checagem numérica
-   //fazer checagem de range
-   //checar se documento existe para que se possa remover
+   //Remove uma nota existente na lista de acordo com um
+   //índice fornecido pelo usuário
+   //Não toma qualquer ação caso o índice seja menor que notas
+   //Não toma qualquer ação caso não existam notas a sere 
+   //removidas
    std::ifstream notas = std::ifstream("notas.txt");
    std::string leitura;
    unsigned int contador = 0;
@@ -80,8 +84,20 @@ void remove_nota(){
    while(getline(notas, leitura)){
       if(leitura==std::string("*"))
          continue;
-      else{
+      else
          linhas.push_back(leitura);
+   }
+   
+   if(linhas.size()==0){
+      std::cout << "Não existem notas a serem apagadas.\nEncerrando..." << std::endl;
+      notas.close();
+      return;
+   }
+   else if(linhas.size()!=0){
+      if(linhas.size()<indice){
+      std::cout << "Índice maior que quantidade de notas.\nEncerrando..." << std::endl;
+      notas.close();
+      return;
       }
    }
    notas.close();
@@ -90,6 +106,8 @@ void remove_nota(){
 }
 
 void mostra_notas(){
+//mostra as notas em formato amigável para o usuário
+//com a numeração posicional de cada nota nas lista
    std::ifstream notas = std::ifstream("notas.txt");
    std::string leitura;
    unsigned int contador = 0;
@@ -109,6 +127,8 @@ void mostra_notas(){
 }
 
 void adicionar_nota(){
+//adiciona uma nota nova ao documento geral de notas, criando
+//um documento para isso, caso nenhum documento de notas exista
    unsigned int quantidade;
    std::string entrada;
    std::ofstream notas;
@@ -134,6 +154,9 @@ void adicionar_nota(){
 }
 
 bool testa_entrada(std::string entrada){
+//verifica se a entrada dada pelo usuário como uma nova nota se
+//enquadra em um formato válido de nota, i.e, não é apenas uma
+//string com espaços vazios ou uma string de tamanho 0
    if(entrada.size()==0)
    //se a entrada for vazia
       return false;

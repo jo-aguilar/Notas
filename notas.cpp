@@ -32,6 +32,7 @@ void mostra_notas();
 void remove_nota();
 void refaz_notas();
 void mostra_ajuda();
+void erro_comando();
 
 //===============================================================================//
 //                                  MAIN                                         //
@@ -39,9 +40,9 @@ void mostra_ajuda();
 int main(int argc, char** argv){
 	struct stat notas;
 	if(stat(path.c_str(), &notas)!=0){
-	//os diretórios necessários para a utilização do sistema não existem
-	//da primeira vez que o programa é usado. Cria-se os diretórios 
-	//necessário programaticamente
+		//os diretórios necessários para a utilização do sistema não existem
+		//da primeira vez que o programa é usado. Cria-se os diretórios 
+		//necessário programaticamente
 		std::cout << "Folder /Notas não existe\nCriando /Notas..." << std::endl;	
 		mkdir(path.c_str(), 0777);
 		std::cout << "Criando /Notas/Boletins...\n" << std::endl;
@@ -49,7 +50,7 @@ int main(int argc, char** argv){
 	}
 
 	if(argc==1){
-		std::cout << "Para uma listagem dos comandos existentes\n"\
+		std::cout << "[!!!] Para uma listagem dos comandos existentes\n"\
 		"digite " << argv[0] << " ajuda\n" << std::endl;
 	}
 	if(argc==1)
@@ -57,18 +58,24 @@ int main(int argc, char** argv){
 	else if(argc==2){
 		if(argv[1]==std::string("ajuda"))
 			mostra_ajuda();
+		else if (argv[1]==std::string("nota"))
+			adicionar_nota();
+		else if (argv[1]==std::string("boletim"))
+			menu_boletim();
+		else
+			erro_comando();
 	}
-	else if (argc==3){
-		if(argv[1]==std::string("adc")){
-			if(argv[2]==std::string("nota"))
-				adicionar_nota();
-			else if(argv[2]==std::string("boletim"))
-				menu_boletim();
-		}
-		else if(argv[1]==std::string("rm")){
-			if(argv[2]==std::string("nota"))
+	else if(argc==3){
+		if(argv[2]==std::string("rm")){
+			if(argv[1]==std::string("nota"))
 				remove_nota();
+			else if(argv[1]==std::string("boletim"))
+				remove_boletim();
+			else
+				erro_comando();
 		}
+		else
+			erro_comando();
 	}
 	else
 		std::cout << "ERRO: Quantidade incompatível de comandos" << std::endl;
@@ -80,14 +87,18 @@ int main(int argc, char** argv){
 //=============================================================================//
 
 void mostra_ajuda(){
-	std::cout << "Uso: ./notas <arg1> <arg2>\n"\
-		"                ./notas  <arg1> <arg2> <arg3>\n"\
-		"arg1 arg2 = acd nota  : adicionar nova nota\n"\
-		"arg1 arg2 = acd boletim: adicionar lista-boletim\n"\
-		"arg1 arg2 = lista notas  : ver todas as notas\n"\
-		"arg1 arg2 = lista boletim: ver boletins por nome \n"\
-		"arg1 arg2 arg3 = rm nota #[n] : apagar nota n" << std::endl;
+	std::cout << "\nUso: ./notas\n"\
+	             "     ./notas <arg1>\n"\
+		     "     ./notas <arg1> <arg2>\n"\
+		     "     ./notas  <arg1> <arg2> <arg3>\n"\
+		"./notas           : mostra notas e ajuda\n"\
+		"arg1  = ajuda     : mostrar esta mensagem\n"\
+		"arg1  = nota      : manipular notas\n"\
+		"arg1  = boletim   : adicionar lista-boletim\n"\
+		"arg1 arg2 = notas   rm: apagar nota\n"\
+		"arg1 arg2 = boletim rm: apagar boletim\n" << std::endl;
 }
+void erro_comando(){std::cout << "Comando não encontrado.\nTerminando..." << std::endl;}
 //=============================================================================//
 //                             MANIPULADOR DE NOTAS                            //
 //=============================================================================//
@@ -155,9 +166,8 @@ void mostra_notas(){
 	while(getline(notas, leitura)){
 		if(leitura==std::string("*"))
 			std::cout << "____________________________________" << std::endl;
-		else{
+		else
 			std::cout << "#" << ++contador << "| " << leitura << std::endl;
-		}
 	}
 	notas.close();
 }

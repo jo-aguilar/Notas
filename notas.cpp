@@ -332,10 +332,10 @@ void mostra_boletim(std::vector<Alvo>alvos){
 		if(alvos[clk].marcador=='-')
 			std::cout << "[ ]";
 		else
-			std::cout << "[" << alvos[clk].marcador << "]";
+			std::cout << "[" << "\033[1;31m" << alvos[clk].marcador << "\033[0m" << "]";
 		std::cout << " ";
 		std::cout << "#" << alvos[clk].indice << "| "\
-		<< alvos[clk].alvo << std::endl << std::endl;
+		<< alvos[clk].alvo << std::endl;
 	}
 }
 
@@ -368,7 +368,10 @@ void mostra_lista_boletim(){
 		return;
 	}
 	for(auto arquivo:arquivos)
-		std::cout << arquivo << std::endl;
+		if((strcmp(arquivo, ".")==0) or (strcmp(arquivo,"..")==0))
+			continue;
+		else
+			std::cout << "\033[1;31m" << arquivo << "\033[0m" << std::endl;
 	std::cout << std::endl;
 }
 

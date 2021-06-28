@@ -33,6 +33,7 @@ void remove_nota();
 void refaz_notas();
 void mostra_ajuda();
 void erro_comando();
+void visualiza_boletim();
 
 //===============================================================================//
 //                                  MAIN                                         //
@@ -74,6 +75,13 @@ int main(int argc, char** argv){
 			else
 				erro_comando();
 		}
+		else if(argv[2]==std::string("vis")){
+			if (argv[1]==std::string("boletim"))
+				visualiza_boletim();
+			else
+				erro_comando();
+
+		}
 		else
 			erro_comando();
 	}
@@ -95,8 +103,9 @@ void mostra_ajuda(){
 		"arg1  = ajuda     : mostrar esta mensagem\n"\
 		"arg1  = nota      : manipular notas\n"\
 		"arg1  = boletim   : adicionar lista-boletim\n"\
-		"arg1 arg2 = notas   rm: apagar nota\n"\
-		"arg1 arg2 = boletim rm: apagar boletim\n" << std::endl;
+		"arg1 arg2 = notas   rm : apagar nota\n"\
+		"arg1 arg2 = boletim rm : apagar boletim\n"\
+		"arg1 arg2 = boletim vis: visualizar um boletim\n" << std::endl;
 }
 void erro_comando(){std::cout << "Comando não encontrado.\nTerminando..." << std::endl;}
 //=============================================================================//
@@ -392,3 +401,39 @@ void remove_boletim(){
 	}
 }
 
+void visualiza_boletim(){
+	/*Entra em modo de manipulação de boletins, dando ao usuário as 
+	opções existentes para criação, remoção ou mostra de conteúdo dos
+	boletins já criados */
+	std::cout << "Visualizando um boletim existente" << std::endl;
+	std::vector<Alvo>alvos;
+	int contador = 1, acerto;
+	std::string arquivo, leitura;
+	char opcao;
+	std::ifstream ifs;
+
+	mostra_lista_boletim();
+	std::cout << "Boletim a ser visualizado (sem espaços): " << std::endl << ">>";
+	std::cin >> arquivo;
+	ifs = std::ifstream((path_boletins + "/" + arquivo + ".txt").c_str());
+	if(ifs.fail()){
+		std::cout << "Arquivo não pôde ser aberto\n"\
+			"Falha na abertura ou arquivo inexistente\n"\
+			"Terminando programa..." << std::endl;
+		exit(0);
+	}
+	while(true){
+		if(ifs.eof())
+			break;
+		else{
+			Alvo al;
+			al.indice = contador++;
+			getline(ifs, leitura); al.marcador = leitura[0]; 
+			getline(ifs, leitura); al.alvo = leitura; 
+			if(al.alvo.size()>0)
+				alvos.push_back(al);
+			}
+	}
+	ifs.close();
+	mostra_boletim(alvos);
+}

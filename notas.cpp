@@ -402,9 +402,10 @@ void remove_boletim(){
 }
 
 void visualiza_boletim(){
-	/*Entra em modo de manipulação de boletins, dando ao usuário as 
-	opções existentes para criação, remoção ou mostra de conteúdo dos
-	boletins já criados */
+	/*Entra em modo de visualização de boletins,
+	permitindo que o usuário veja o conteúdo de um boletim, porém, 
+	sem poder editar o mesmo
+	*/
 	std::cout << "Visualizando um boletim existente" << std::endl;
 	std::vector<Alvo>alvos;
 	int contador = 1, acerto;

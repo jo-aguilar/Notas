@@ -380,7 +380,9 @@ void mostra_lista_boletim(){
 		if((strcmp(arquivo, ".")==0) or (strcmp(arquivo,"..")==0))
 			continue;
 		else
-			std::cout << "\033[1;31m" << arquivo << "\033[0m" << std::endl;
+			std::cout << "\033[1;31m" <<
+			std::string(arquivo).substr(0, std::string(arquivo).size()-4) << 
+			"\033[0m" << std::endl;
 	std::cout << std::endl;
 }
 

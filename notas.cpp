@@ -39,6 +39,7 @@ void visualiza_boletim();
 //                                  MAIN                                         //
 //===============================================================================//
 int main(int argc, char** argv){
+	std::system("clear");
 	struct stat notas;
 	if(stat(path.c_str(), &notas)!=0){
 		//os diretórios necessários para a utilização do sistema não existem
@@ -95,6 +96,7 @@ int main(int argc, char** argv){
 //=============================================================================//
 
 void mostra_ajuda(){
+	system("clear");
 	std::cout << "\nUso: ./notas\n"\
 	             "     ./notas <arg1>\n"\
 		     "     ./notas <arg1> <arg2>\n"\
@@ -127,10 +129,12 @@ void remove_nota(){
 	//Não toma qualquer ação caso o índice seja menor que notas
 	//Não toma qualquer ação caso não existam notas a serem 
 	//removidas
+	system("clear");
 	std::ifstream notas = std::ifstream(path + "/notas.txt");
 	std::string leitura;
 	unsigned int contador = 0;
 	unsigned int indice;
+	mostra_notas();
 	std::cout << "Apagar nota número\n>>";
 	std::cin >>  indice;
 	if(!notas){
@@ -184,6 +188,7 @@ void mostra_notas(){
 void adicionar_nota(){
 	//adiciona uma nota nova ao documento geral de notas, criando
 	//um documento para isso, caso nenhum documento de notas exista
+	system("clear");
 	unsigned int quantidade;
 	std::string entrada;
 	std::ofstream notas;
@@ -233,6 +238,7 @@ bool testa_entrada(std::string entrada){
 //=============================================================================//
 
 void menu_boletim(){
+	system("clear");
 	std::string comando;
 	std::cout << "Adicionar boletim ou manipular existente?\n"\
 		     "[cr]: criar               [ma]: manipular\n"\
@@ -253,6 +259,7 @@ void menu_boletim(){
 
 void cria_boletim(){
 	//Cria um novo boletim a partir de especificações dadas pelo usuário
+	system("clear");
 	std::cout << "Criando um novo boletim" << std::endl;
 	std::vector<std::string> alvos_a_adicionar;
 	std::string alvo, nome_doc;
@@ -262,6 +269,8 @@ void cria_boletim(){
 	std::ofstream ofs = std::ofstream((path_boletins + "/" + nome_doc + ".txt").c_str());	
 	
 	getline(std::cin, alvo);
+	std::cout << "Aperte 'q' para terminar a listagem de boletim e" <<
+	             "[ENTER] para ir para o próximo item" << std::endl << std::endl;
 	while(true){
 		std::cout << ">>[alvo]: ";
 		getline(std::cin, alvo);
@@ -273,15 +282,16 @@ void cria_boletim(){
 			alvos_a_adicionar.push_back(alvo);
 		}
 	}
-	for(int clk = 0; clk < alvos_a_adicionar.size(); clk++)
-		std::cout << alvos_a_adicionar[clk] << std::endl;
 	ofs.close();
+	system("clear");
+	std::cout << "Boletim criado e salvo.\nTerminando...\n" << std::endl;
 }
 
 void manipula_boletim(){
 	/*Entra em modo de manipulação de boletins, dando ao usuário as 
 	opções existentes para criação, remoção ou mostra de conteúdo dos
 	boletins já criados */
+	system("clear");
 	std::cout << "Manipulando um boletim existente" << std::endl;
 	std::vector<Alvo>alvos;
 	int contador = 1, acerto;
@@ -299,6 +309,7 @@ void manipula_boletim(){
 			"Terminando programa..." << std::endl;
 		exit(0);
 	}
+	system("clear");
 	while(true){
 		if(ifs.eof())
 			break;
@@ -364,6 +375,7 @@ void mostra_lista_boletim(){
 	/*Mostra os arquivos presentes no diretório de boletins diretamente
 	para que o usuário possa escolher entre eles */
 	DIR* dir;
+	system("clear");
 	struct dirent* leitura;
 	std::vector<char*> arquivos;
 	std::cout << "Boletins existentes: " << std::endl;
@@ -379,14 +391,16 @@ void mostra_lista_boletim(){
 	for(auto arquivo:arquivos)
 		if((strcmp(arquivo, ".")==0) or (strcmp(arquivo,"..")==0))
 			continue;
-		else
+		else{
 			std::cout << "\033[1;31m" <<
 			std::string(arquivo).substr(0, std::string(arquivo).size()-4) << 
 			"\033[0m" << std::endl;
+		}
 	std::cout << std::endl;
 }
 
 void remove_boletim(){
+	system("clear");
 	/*Remove um boletim segundo especificado pelo usuário, ou retorna
 	uma mensagem de erro caso o arquivo não existe no diretório de boletins */
 	std::cout << "Removendo boletim existente" << std::endl;

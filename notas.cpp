@@ -331,8 +331,8 @@ void manipula_boletim(){
 		std::cin >> acerto;
 		if(acerto>0 and (acerto<alvos.size()+1)){
 			alvos[acerto-1].marcador = '*';
-			//mostra_alvos() mostra o vector, não o arquivo	
 			refaz_boletim(arquivo, alvos);
+			system("clear");
 			mostra_boletim(alvos);
 			}
 		else{
@@ -410,7 +410,7 @@ void remove_boletim(){
 	std::cout << ">>";
 	std::cin >> arquivo;
 	if(remove((path_boletins + "/" + arquivo +".txt").c_str())==false)
-		std::cout << "Boletim removido." << std::endl;
+		std::cout << "Boletim removido.\nTerminando..." << std::endl;
 	else{
 		std::cout << "Arquivo não encontrado. \nTerminando..." << std::endl;
 		exit(0);

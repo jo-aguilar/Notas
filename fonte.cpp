@@ -11,10 +11,12 @@
 #include <conio.h>
 #include <filesystem>
 #include "fonte.h"
+#define USUARIO_MAX 50
 #define DEBUG(X) std::cout << #X << std::endl; 
 
 namespace{
-	std::string usuario = getlogin();
+	char us[USUARIO_MAX];
+	std::string usuario(cuserid(us));
 	std::string notas = "/home/"+usuario+"/Documents/Notas/notas.txt";
 	std::string path_boletins = "/home/"+usuario+"/Documents/Notas/Boletins/";
 	class Boletim{
@@ -78,7 +80,7 @@ void mostra_notas(){
 	if(notas.size()==0)
 		std::cout << "Sem notas para mostra.\nTerminando...\n\n";
 	else{
-		for(int clk = 0; clk < notas_vetor.size(); clk++){
+		for(int clk = 0; clk < (int)notas_vetor.size(); clk++){
 			std::cout << "#" << std::setfill('0') 
 			          << std::setw(2) << clk + 1 << " : ";
 			modula_palavras(notas_vetor[clk]);
@@ -118,7 +120,7 @@ static bool checa_str(std::string nota){
 	/*verifica se a string fornecida pelo usuário tem apenas caracteres em branco
 	Se sim, retorna true. Se não, retorna false */
 	bool bandeira = false;
-	for(int clk = 0; clk < nota.size(); clk++)
+	for(int clk = 0; clk < (int)nota.size(); clk++)
 		if(nota[clk]!=' ') return false;
 	return true;
 }
@@ -170,7 +172,7 @@ static bool erroNumerico(std::string entrada){
 
 	/*checa se uma string de entrada é composta apenas por números
 	caso não seja, retorna true. Caso seja, retorna false*/
-	for(int clk = 0; clk < entrada.size(); clk++){
+	for(int clk = 0; clk < (int)entrada.size(); clk++){
 		if(isdigit(entrada[clk])==false)
 			return true;
 	}
@@ -203,7 +205,7 @@ static void refaz_notas(std::vector<std::string> notas_vetor){
 	/* recebe um vetor com uma lista de notas rearranjada e sobrescreve o 
 	documento com as notas no novo formato */
 	std::ofstream ofs(notas, std::ios_base::trunc);
-	for(int clk = 0; clk < notas_vetor.size(); clk++)
+	for(int clk = 0; clk < (int)notas_vetor.size(); clk++)
 		ofs << notas_vetor[clk] << std::endl;
 	ofs.close();
 }
@@ -221,7 +223,7 @@ static void removedorNotas(std::vector<std::string> notas_vetor){
 		std::string entrada;
 		bool (*fpointer)(std::string) = erroNumerico;
 		entrada = checaString(fpointer, ">Nota a ser removida: ");
-		if(std::stoi(entrada)>notas_vetor.size() or std::stoi(entrada)<=0){
+		if(std::stoi(entrada)>(int)notas_vetor.size() or std::stoi(entrada)<=0){
 			std::cout <<"\nÍndice inexistente.\nTerminando...\n\n";
 			exit(0);
 		}
@@ -324,7 +326,7 @@ void visualiza_boletim(std::string nome_boletim = "", bool apaga = true){
 	if(apaga==true)
 		system("clear");
 	boletim = retorna_boletim(nome);
-	for(int clk = 0; clk < boletim.size(); clk++){
+	for(int clk = 0; clk < (int)boletim.size(); clk++){
 		std::cout << "#" << std::setfill('0') << std::setw(2) << clk+1;
 		if(boletim[clk].retornaMarcador()=='-')
 			std::cout << " [ ] ";
@@ -350,7 +352,7 @@ static std::vector<std::string> vetor_boletim(){
 		  << "[q] termina a listagem\n\n";
 	getline(std::cin, entrada);
 	while(entrada!="q"){
-		if(!entrada.empty());
+		if(!entrada.empty())
 			boletim.push_back(entrada);
 		std:: cout<< ">alvo: ";
 		getline(std::cin, entrada);
@@ -371,7 +373,7 @@ static void cria_boletim(){
 	std::string entrada = checaString(fpointer, mensagem);     //nome do novo arquivo
 	std::ofstream ofs(path_boletins + entrada + ".txt", std::ios_base::trunc);
 	std::vector<std::string> boletins = vetor_boletim();       //vetor com elementos do boletim
-	for(int n = 0; n < size(boletins); n++){
+	for(int n = 0; n < (int)size(boletins); n++){
 		ofs << boletins[n] << std::endl;
 		ofs << '-' << std::endl;
 	}
@@ -460,7 +462,7 @@ static void refaz_boletim(std::string nome_boletim, std::vector<Boletim> boletim
 	do boletim */
 	std::string path = path_boletins+nome_boletim+".txt";
 	std::ofstream ofs = std::ofstream(path, std::ios::trunc);
-	for(int n = 0; n<size(boletim); n++){
+	for(int n = 0; n<(int)size(boletim); n++){
 		ofs << boletim[n].retornaAlvo() << std::endl;
 		ofs << boletim[n].retornaMarcador() << std::endl;
 	}
@@ -479,7 +481,7 @@ static void atira_em_alvo(std::string nome_boletim){
 	visualiza_boletim(nome_boletim);
 	std::cout << "\n>Alvo a atirar:\n>";
 	std::cin>>indice;
-	while(0>=indice or indice>size(boletim)){
+	while(0>=indice or indice>(int)size(boletim)){
 		std::cout << "\nÍndice invalido. Tente novamente\n";
 		std::cout << ">Alvo a atirar:\n>";
 		std::cin>>indice;
@@ -551,7 +553,7 @@ static void trocando_boletim(){
 	std::vector<Boletim>b2 = troca.retornaB2();
 	std::cout << mensagem;
 	std::cin>>entrada;
-	while(entrada<=0 or entrada>size(b1)){
+	while(entrada<=0 or entrada>(int)size(b1)){
 		std::cout << "Índice inválido." << mensagem;
 		std::cin>>entrada;
 	}
@@ -577,7 +579,7 @@ static void removendo_alvo(std::string nome){
 	visualiza_boletim(nome);
 	std::cout << "\nAlvo a ser removido:\n>";
 	std::cin >> indice;
-	while(indice <=0 or indice>size(alvos)){
+	while(indice <=0 or indice>(int)size(alvos)){
 		std::cout << "\nÍndice inválido.\nTente novamente.\n";
 		std::cout << "\nAlvo a ser removido:\n>";
 		std::cin >>indice;
@@ -701,11 +703,11 @@ void menu_boletim(){
 	while((c=getch())!=10){
 		system("clear");
 		if(c==66){
-			if(contador>=1 and contador<size(_menu)) contador++;
-			else if(contador==size(_menu)) contador=1;
+			if(contador>=1 and contador<(int)size(_menu)) contador++;
+			else if(contador==(int)size(_menu)) contador=1;
 		}
 		else if(c==65){
-			if(contador<=size(_menu) and contador>1) contador--;
+			if(contador<=(int)size(_menu) and contador>1) contador--;
 			else if(contador==1) contador=size(_menu);
 		}
 		else if(c=='q'){
@@ -718,5 +720,4 @@ void menu_boletim(){
 	}
 	direciona_menu(contador);
 }
-
 

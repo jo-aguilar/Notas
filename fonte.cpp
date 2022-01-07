@@ -352,7 +352,7 @@ static std::vector<std::string> vetor_boletim(){
 		  << "[q] termina a listagem\n\n";
 	getline(std::cin, entrada);
 	while(entrada!="q"){
-		if(!entrada.empty())
+		if(!entrada.empty());
 			boletim.push_back(entrada);
 		std:: cout<< ">alvo: ";
 		getline(std::cin, entrada);

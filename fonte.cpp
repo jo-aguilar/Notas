@@ -282,6 +282,7 @@ void mostra_lista_boletim(){
 		}
 }
 
+
 static std::string recebe_nome_boletim(){
 	//Recebe o nome do boletim a ser criado, verificando a integridade do nome
 	//[!!!] ADICIONAR FUNÇÃO QUE CHEQUE PRÉ-EXISTÊNCIA DE DETERMINADO BOLETIM
@@ -294,9 +295,8 @@ static std::string recebe_nome_boletim(){
 static std::vector<Boletim> retorna_boletim(std::string nome){
 	/* Retorna um vetor com elementos Boletim a partir de uma leitura de um arquivo
 	de alvos especificado pelo usuário */
-	//system("clear");
 	std::vector<Boletim> boletim;
-	colorir("[ ", "AMARELO"); colorir(nome, "AMARELO"); colorir(" ]", "AMARELO");
+	//colorir("[ ", "AMARELO"); colorir(nome, "AMARELO"); colorir(" ]", "AMARELO");
 	std::cout << std::endl;
 	std::ifstream ifs(path_boletins + nome + ".txt");
 	while(!ifs.eof()){
@@ -325,13 +325,14 @@ void visualiza_boletim(std::string nome_boletim = "", bool apaga = true){
 		nome = nome_boletim;	
 	if(apaga==true)
 		system("clear");
+	colorir("[ ", "AMARELO"); colorir(nome, "AMARELO"); colorir(" ]", "AMARELO");
 	boletim = retorna_boletim(nome);
 	for(int clk = 0; clk < (int)boletim.size(); clk++){
 		std::cout << "#" << std::setfill('0') << std::setw(2) << clk+1;
 		if(boletim[clk].retornaMarcador()=='-')
 			std::cout << " [ ] ";
 		else{
-			std::cout << " ["; colorir("*", "VERDE"); std::cout<< "] ";
+			std::cout << " ["; colorir("\u2714", "VERDE"); std::cout<< "] ";
 			}
 		std::cout << boletim[clk].retornaAlvo() << std::endl;
 	}
@@ -639,17 +640,15 @@ static void acessa_func(const int item, std::string nome_boletim){
 		  (erro_comando());
 }
 
-static void menu_manipula_boletim(std::string nome_boletim){
-	/* Função de chamada que dá as opções de manipulação para o usuário
-	para que ele possa escolher o que deseja fazer com o arquivo antes
-	selecionado e já verificado. Leva a uma função de seleção de ações
-	que chamam a função requerida */
-	std::string lista[] = {"atirar   ", "adicionar  ", "remover"};
+static int lista_acoes(const std::string lista[], const std::string mensagem, const int tamanho){
+	/* Função genérica que mostra uma mensagem de ação e uma lista de
+	ações a executar, retornando um inteiro relativo à opção que for 
+	escolhida pelo usuário*/
 	int contador = 1;
 	char entrada;
 	system("clear");
-	std::cout << "Ação a executar:" << std::endl;
-	mostra_menu(size(lista), lista, contador, 'h', "VERDE");
+	std::cout << mensagem << std::endl;
+	mostra_menu(tamanho, (std::string*)lista, contador, 'h', "VERDE");
 	getch();
 	while((entrada=getch())!=10){
 		if(entrada==67){
@@ -661,12 +660,23 @@ static void menu_manipula_boletim(std::string nome_boletim){
 			if(contador==0) contador=3;
 		}
 		system("clear");
-		std::cout << "Ação a executar:" << std::endl;
-		mostra_menu(size(lista), lista, contador, 'h', "VERDE");
+		std::cout << mensagem << std::endl;
+		mostra_menu(tamanho, (std::string*)lista, contador, 'h', "VERDE");
 	}
-	acessa_func(contador, nome_boletim);
+	return contador;
 }
 
+static void menu_manipula_boletim(std::string nome_boletim){
+	/* Função de chamada que dá as opções de manipulação para o usuário
+	para que ele possa escolher o que deseja fazer com o arquivo antes
+	selecionado e já verificado. Leva a uma função de seleção de ações
+	que chamam a função requerida */
+	const std::string lista[] = {"[atirar]   ", "[adicionar]   ", "[remover]"};
+	const std::string mensagem = "Ação a executar sobre boletim:";
+	const int tamanho = (int)size(lista);
+	const int contador = lista_acoes(lista, mensagem, tamanho);
+	acessa_func(contador, nome_boletim);
+}
 
 static void manipula_boletim(){
 	/* Função cabeçalho que demanda qual arquivo o usuário deseja 
@@ -676,6 +686,77 @@ static void manipula_boletim(){
 	manipula_generica("\nBoletim a ser manipulado:\n>", func);
 }
 
+
+//==================================== limpa boletim =====================================//
+static std::vector<std::string> vetor_nomes_boletins(){
+	//Retorna um vetor com o nome de todos os boletins existentes
+	DIR* dir;
+	struct dirent* leitura;
+	std::vector<std::string> arquivos;
+	
+	if((dir = opendir(path_boletins.c_str()))!=nullptr){
+		while((leitura = readdir(dir))!=nullptr){
+			if(std::string(leitura->d_name)=="." or std::string(leitura->d_name)=="..")
+		     		continue;
+			else
+				arquivos.push_back(std::string(leitura->d_name));
+		//closedir(dir);
+		}
+		for(int clk = 0; clk < (int)arquivos.size(); clk++)
+			arquivos[clk] = arquivos[clk].substr(0, arquivos[clk].size() - 4);
+		closedir(dir);
+	}
+	else{
+		perror("Sem boletins a serem limpos.\nFinalizando...\n");
+		exit(0);
+	}
+	return arquivos;
+}
+
+static void remove_tiros_boletim(std::string nome_boletim){
+	/*protocolo genérico para limpeza de um boletim. A função é chamada
+	em forma de ponteiro por apaga_um(), sendo submetida a 
+	manipula_generica(string, func) para que possa limpar um único boletim*/
+	std::vector<Boletim> boletim = retorna_boletim(nome_boletim);
+	for(int clk = 0; clk < (int)boletim.size(); clk++){
+		if(boletim[clk].retornaMarcador()=='*')
+			boletim[clk].setaMarcador('-');
+	}
+	refaz_boletim(nome_boletim, boletim);
+	std::cout << "Boletim ["; colorir(nome_boletim, "VERDE");
+	std::cout << "] limpo...";
+}
+
+static void apaga_um(){
+	/* Cabeçalho de chamada de funções para que apenas um boletim seja limpo*/
+	void(*func)(std::string) = remove_tiros_boletim;
+	manipula_generica("\nBoletim a ser limpo:\n>", func);
+	std::cout << "\nTerminando...\n" << std::endl;
+}
+
+static void apaga_todos(){
+	std::cout << "\nLimpando todos os boletins..." << std::endl;
+	std::vector<std::string>nomes_boletins = vetor_nomes_boletins();
+//	for(auto nomes:vetor_nomes_boletins())
+//		std::cout << nomes << std::endl;
+	for(int clk = 0; clk<(int)nomes_boletins.size(); clk++){
+		remove_tiros_boletim(nomes_boletins[clk]);
+	}
+	std::cout << "\n\nLimpeza concluída.\nTerminando...\n" << std::endl;
+			
+}
+
+static void requisita_limpar(){
+	/* Requisita se apenas um ou todos os boletins devem ser manipulados. 
+	Chama uma função genérica de manipulação que faz a chamada para o modelo 
+	de opção escolhida pelo usuário */
+	const std::string mensagem = "Boletins a limpar:";
+	const std::string lista[] = {"[apenas um]  ", "[todos]"};
+	const int tamanho = (int)size(lista);
+	const int contador = lista_acoes(lista, mensagem, tamanho);
+	if   (contador==1) apaga_um();
+	else               apaga_todos();
+}
 
 
 //===================================== menu boletim =====================================//
@@ -688,12 +769,13 @@ static void direciona_menu(const int contador){
 	else if (contador==3) visualiza_boletim();
 	else if (contador==4) remove_boletim();
 	else if (contador==5) trocando_boletim();
+	else if (contador==6) requisita_limpar();
 }
 
 void menu_boletim(){
 	/* Mostra o menu principal para as funções dos boletins, que fazem as 
 	chamadas para as suas respectivas tarefas */
-	std::string _menu[] = {"Criar", "Manipular", "Visualizar", "Apagar", "Trocar alvos"};
+	std::string _menu[] = {"Criar", "Manipular", "Visualizar", "Apagar", "Trocar alvos", "Limpar"};
 	std::string opc = "Qual ação executar sobre boletim?: \n\n";
 	int contador = 1;
 	char c;

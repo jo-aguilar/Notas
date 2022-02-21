@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 namespace{
-	std::string diretorio_principal = "/home/" + getlogin() + "/Documents/Notas/";
+	std::string diretorio_principal = "/home/" + std::string(getlogin()) + "/Documents/Notas/";
 };
 
 int main(int argc, char** argv){

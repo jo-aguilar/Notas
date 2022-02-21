@@ -9,7 +9,7 @@
 #include <filesystem>
 
 namespace{
-	std::string diretorio_principal = "/var/Notas/";
+	std::string diretorio_principal = "~/Documents/Notas/";
 };
 
 int main(int argc, char** argv){

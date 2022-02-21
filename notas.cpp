@@ -4,7 +4,7 @@
 #include <filesystem>
 
 namespace{
-	std::string diretorio_principal = "/home/joao/Documents/Notas/";
+	std::string diretorio_principal = "/var/Notas/";
 };
 
 int main(int argc, char** argv){

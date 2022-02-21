@@ -11,14 +11,11 @@
 #include <conio.h>
 #include <filesystem>
 #include "fonte.h"
-#define USUARIO_MAX 50
 #define DEBUG(X) std::cout << #X << std::endl; 
 
 namespace{
-	char us[USUARIO_MAX];
-	std::string usuario(cuserid(us));
-	std::string notas = "/home/"+usuario+"/Documents/Notas/notas.txt";
-	std::string path_boletins = "/home/"+usuario+"/Documents/Notas/Boletins/";
+	std::string notas = "/var/Notas/notas.txt";
+	std::string path_boletins = "/var/Notas/Boletins/";
 	class Boletim{
 		char marcador;
 		std::string alvo;

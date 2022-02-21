@@ -1,3 +1,8 @@
+/*
+[!!!] ATENÇÃO: primeira vez que o programa for instalado, deve-se usar sudo
+[!!!] ATENÇÃO: comando para .bashrc: export PATH="/home/<path>:$PATH"
+*/
+
 #include <iostream>
 #include <string>
 #include "fonte.h"

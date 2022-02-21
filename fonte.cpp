@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -14,8 +15,9 @@
 #define DEBUG(X) std::cout << #X << std::endl; 
 
 namespace{
-	std::string notas = "/var/Notas/notas.txt";
-	std::string path_boletins = "/var/Notas/Boletins/";
+	std::string usuario = getlogin();
+	std::string notas = "/home/"+usuario+"/Documents/Notas/notas.txt";
+	std::string path_boletins = "/home/"+usuario+"/Documents/Notas/Boletins/";
 	class Boletim{
 		char marcador;
 		std::string alvo;

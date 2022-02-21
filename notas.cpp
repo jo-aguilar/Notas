@@ -7,9 +7,10 @@
 #include <string>
 #include "fonte.h"
 #include <filesystem>
+#include <unistd.h>
 
 namespace{
-	std::string diretorio_principal = "~/Documents/Notas/";
+	std::string diretorio_principal = "/home/" + getlogin() + "/Documents/Notas/";
 };
 
 int main(int argc, char** argv){

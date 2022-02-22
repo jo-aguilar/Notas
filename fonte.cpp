@@ -526,7 +526,7 @@ static Boletins_de_troca retorna_boletins(){
 		if(b2=="q"){
 			std::cout << "\nTerminando...\n";
 			exit(0);
-		}
+		} 
 		else if(b1==b2)
 			std::cout << "\nBoletins 1 e 2 não podem ser iguais.";
 		else
